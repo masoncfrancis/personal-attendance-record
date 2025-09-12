@@ -1,4 +1,4 @@
-# personal-attendance-record
+# personal-attendance-record (`par`)
 
 I wrote this tool, called `par` for short, to automate keeping my own record of my in-office attendance. 
 
@@ -43,4 +43,4 @@ This mode works by checking if you can reach a URL, configured in the `CHECK_URL
 
 ## License
 
-This code is provided under an MIT license. Use it how you like. I'm not responsible for how you use this code.
+This code is provided under an MIT license. Use it how you like. I'm not responsible for how you use this code. If you rely on this software to keep track of your attendance, you do so at your own risk. I'm not liable for any consequences you experience related to this software.
