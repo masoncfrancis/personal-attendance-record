@@ -63,8 +63,8 @@ Create the cron jobs with `crontab -e` to run at those times and append output t
 
 ```
 # Run at 09:30, 11:30, 15:00 and 16:30 every day
-30 9,11,16 * * * /full/path/to/par --check >> /var/log/par-check.log 2>&1
-0 15 * * * /full/path/to/par --check >> /var/log/par-check.log 2>&1
+30 9,11,16 * * * /full/path/to/par --check
+0 15 * * * /full/path/to/par --check
 ```
 
 - **Use absolute paths:** cron runs with a minimal environment — always use the full path to the `par` executable.
