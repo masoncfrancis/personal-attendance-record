@@ -2,7 +2,7 @@
 
 I wrote this tool, called `par` for short, to automate keeping my own record of my in-office attendance. 
 
-It will check if you are in office by means of seeing what you can reach on the network, assuming that your office network has resources or is configured differently than your network at home. 
+It will check if you are in office by means of seeing what you can reach on the network, assuming that your office network has different resources or is configured differently than your network at home. 
 
 `par` is designed to be run periodically by a cronjob, and stores the record in a CSV file.
 
