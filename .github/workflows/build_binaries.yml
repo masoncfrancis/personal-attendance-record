@@ -9,6 +9,9 @@ jobs:
     name: Build and Upload
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     strategy:
       matrix:
         goos: [linux, darwin, windows, freebsd]
