@@ -189,9 +189,9 @@ func logAttendance(parFile string, inOffice bool) error {
 	if increment == "" {
 		increment = "daily"
 	}
-	now := time.Now()
+	now := time.Now().Local()
 	var record []string
-	humanTime := now.Format("2006-01-02 03:04:05 PM")
+	humanTime := now.Format("2006-01-02 03:04:05 PM MST")
 	if increment == "all" {
 		record = []string{humanTime, boolToString(inOffice)}
 		return appendCSV(parFile, record)
@@ -265,8 +265,9 @@ func upsertDailyCSV(filename string, now time.Time, inOffice bool) error {
 	f.Truncate(0)
 	f.Seek(0, 0)
 	w := csv.NewWriter(f)
+	now = now.Local()
 	dateStr := now.Format("2006-01-02")
-	humanTime := now.Format("2006-01-02 03:04:05 PM")
+	humanTime := now.Format("2006-01-02 03:04:05 PM MST")
 	updated := false
 	// Start from 1 if header present
 	startIdx := 1
