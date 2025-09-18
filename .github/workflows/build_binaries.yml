@@ -31,7 +31,7 @@ jobs:
             BIN_NAME="$BIN_NAME.exe"
           fi
           echo "Building for $GOOS/$GOARCH -> dist/$BIN_NAME"
-          go build -o "dist/$BIN_NAME" .
+          go build -o "dist/$BIN_NAME" ./cmd/par
 
       - name: Generate checksum
         run: |
