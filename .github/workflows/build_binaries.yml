@@ -1,0 +1,51 @@
+name: Release Go Binaries
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build and Upload
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        goos: [linux, darwin, windows, freebsd]
+        goarch: [amd64, arm64]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        
+      - name: Build binary
+        run: |
+          mkdir -p dist
+          export GOOS=${{ matrix.goos }}
+          export GOARCH=${{ matrix.goarch }}
+          BIN_NAME="par-${GOOS}-${GOARCH}"
+          if [ "$GOOS" = "windows" ]; then
+            BIN_NAME="$BIN_NAME.exe"
+          fi
+          echo "Building for $GOOS/$GOARCH -> dist/$BIN_NAME"
+          go build -o "dist/$BIN_NAME" .
+
+      - name: Generate checksum
+        run: |
+          cd dist
+          for file in *${{ matrix.goos }}-${{ matrix.goarch }}*; do
+            sha256sum "$file" > "$file.sha256"
+          done
+
+      - name: Upload to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload \
+            "${{ github.event.release.tag_name }}" \
+            dist/*${{ matrix.goos }}-${{ matrix.goarch }}* \
+            dist/*${{ matrix.goos }}-${{ matrix.goarch }}*.sha256 \
+            --clobber
