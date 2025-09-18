@@ -12,20 +12,7 @@ It will check if you are in office by means of seeing what you can reach on the 
 
 #### UNIX-like Operating Systems (Linux, macOS, etc.)
 
-Run the following command to install or update an existing installation on UNIX-like operating systems:
-
-```
-curl -s https://installer-par-643095722924.us-central1.run.app/! | sudo bash
-```
-
-(I know the URL is weird, that's just how it is until I can get a nicer one set up. This one is the direct URL to where I'm hosting it on Google Cloud)
-
-You're right to be wary of running random bash scripts on your system, so if you want to read through the install script before you run it, you can see it at [https://installer-par-643095722924.us-central1.run.app/!?type=script](https://installer-par-643095722924.us-central1.run.app/!?type=script). It's not very long. 
-Basically the script checks what OS and architecture you're using, downloads the appropriate binary, and installs it to a directory, most likely `/usr/local/bin`.
-If you get an error saying that the directory doesn't exist, you can create it with `sudo mkdir -p [the directory path]`. If you do that, install successfully, 
-and try to run `par` and it says it can't be found, you might need to add that directory to your PATH variable. Look up how to do that if you're not sure.
-
-If you would rather not use the install script, you can manually download the appropriate binary for your operating system and architecture from the [Releases page](https://github.com/masoncfrancis/personal-attendance-record/releases) and use it as you please.
+Until I can get a package manager or install script set up, you'll need to download the binary manually from the [Releases page](https://github.com/masoncfrancis/personal-attendance-record/releases). Then, if you like, move it to a directory in your PATH. If you don't know how to do that, Google and ChatGPT are your friends.
 
 ##### If you run into problems running `par` after downloading/installing
 
@@ -35,9 +22,32 @@ If you get a `permission denied` error, you may need to run `chmod +x /path/to/p
 
 While Windows binaries are available, I haven't tested them and they are not officially supported. If you are feeling adventurous, you can try downloading the appropriate binary for your architecture from the Releases page and using it as you please. Let me know if you run into any issues.
 
+#### Virus warning??
+
+Go programs are stuctured differently than a lot of other programs out there. Some antivirus software may flag the binaries as suspicious because they are not signed. If you run into this issue, you can try adding an exception for the binary in your antivirus software. Or, if you're worried, feel free to build the program from source yourself. 
+
+#### Building from source
+
+You'll need to have [Go](https://go.dev/dl/) (version 1.13 or later) installed to build from source.
+
+Once you have Go installed, you can build `par` from source. First, clone the repository:
+
+```bash
+git clone https://github.com/masoncfrancis/personal-attendance-record.git
+cd personal-attendance-record
+```
+
+Then, build the binary:
+
+```bash
+go build -o par ./cmd/par
+```
+
+This will create an executable named `par` in the current directory. You can move it to a directory in your PATH if you like.
+
 ### Configuration
 
-All settings are set via environment variables. You can use a `.env` file kept in the same directory as the executable (`/usr/local/bin` if you used the install script). An example is available in [`.env.example`](.env.example).
+All settings are set via environment variables. You can use a `.env` file kept in the same directory as the executable. An example is available in [`.env.example`](.env.example).
 
 #### File Path
 
@@ -68,7 +78,7 @@ Use the `corporateproxy` method if you have to use a corporate proxy to access t
 
 This method works by checking if you are able to access the internet without going through a corporate proxy. 
 
-###### How It Works:
+###### How the `corporateproxy` method works:
 
 The tool will attempt to query a URL. This URL can be set in the `PAR_URL` environment variable, and needs to be set to a website on the public internet that ordinarily would be unaccessible without using the corporate proxy. If `PAR_URL` is 
 not set, it defaults to `https://www.google.com`. It will also send a ping request to the
@@ -83,7 +93,7 @@ Use the `checkurl` method if you know there are network resources that you canno
 
 This mode works by checking if you can reach the URL configured in the `PAR_URL` environment variable. This variable should be set to a URL that is only reachable when on the office network.
 
-###### How It Works:
+###### How the `checkurl` method works:
 
 `par` will try to reach the URL provided. If it is successful, it assumes you are in the office. If not, it assumes you are working away from the office. 
 
