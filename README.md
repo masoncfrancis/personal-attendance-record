@@ -8,9 +8,41 @@ It will check if you are in office by means of seeing what you can reach on the 
 
 ## Getting Started
 
+### Installation/Updating
+
+#### UNIX-like Operating Systems
+
+Run the following command to install or update an existing installation on UNIX-like operating systems:
+
+```
+curl -s https://installer-par-643095722924.us-central1.run.app/! | sudo bash
+```
+
+(I know the URL is weird, that's just how it is until I can get a nicer one set up)
+
+You're right to be wary of running random bash scripts on your system, so if you want to read through the install script before you run it, you can see it at [https://installer-par-643095722924.us-central1.run.app/!?type=script](https://installer-par-643095722924.us-central1.run.app/!?type=script). It's not very long. 
+Basically the script checks what OS and architecture you're using, downloads the appropriate binary, and installs it to a directory, most likely `/usr/local/bin`.
+If you get an error saying that the directory doesn't exist, you can create it with `sudo mkdir -p [the directory path]`. If you do that, install successfully, 
+and try to run `filesize` and it says it can't be found, you might need to add that directory to your PATH variable. Look up how to do that if you're not sure.
+
+If you would rather not use the install script, you can manually download the appropriate binary for your operating system and architecture from the [Releases page](https://github.com/masoncfrancis/personal-attendance-record/releases) and use it as you please.
+
+##### If you run into problems running `par` after downloading/installing
+
+If you get a `permission denied` error, you may need to run `chmod +x /path/to/par` to make the binary executable. On Macs, you may also need to run `xattr -d com.apple.quarantine /path/to/par` to remove the quarantine attribute that macOS applies to files downloaded from the internet.
+
+#### Windows
+
+I haven't tested this at all on Windows, so please let me know if you run into any issues.
+
+If you are using Windows, you'll need to download the executable for your operating system on the [Releases page](https://github.com/masoncfrancis/personal-attendance-record/releases). 
+If you want it to always be accessible via the command line or PowerShell, make sure to put it somewhere in your PATH variable (or add the directory it's 
+in to your PATH variable). Look up how to do that if you're not sure. 
+
+
 ### Configuration
 
-All settings are set via environment variables. You can use a `.env` file kept in the same directory as the executable. An example is available in [`.env.example`](.env.example).
+All settings are set via environment variables. You can use a `.env` file kept in the same directory as the executable (`/usr/local/bin` if you used the install script). An example is available in [`.env.example`](.env.example).
 
 #### File Path
 
