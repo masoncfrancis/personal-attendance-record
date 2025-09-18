@@ -60,13 +60,16 @@ This mode works by checking if you can reach the URL configured in the `PAR_URL`
 
 `par` will try to reach the URL provided. If it is successful, it assumes you are in the office. If not, it assumes you are working away from the office. 
 
+
 ### Command Line Usage
 
 `par` exposes a simple command-line interface intended for use from a cronjob or manual invocation.
 
 - `--check`, `-c`: Run a single attendance check, update log and exit
+- `--no-save`, `-n`: Run a single attendance check and print the result (no file saved)
 - `--path`, `-p`: Display the path of the file where the attendance record is kept
 - `--version`, `-v`: Display the software version
+
 
 ### Crontab / Scheduling (recommended)
 

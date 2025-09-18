@@ -33,7 +33,7 @@ func main() {
 	flag.Parse()
 
 	if *versionFlag || *versionFlagShort {
-		fmt.Println("personal-attendance-record version", version)
+		fmt.Println("personal-attendance-record (par) version", version)
 		return
 	}
 
@@ -60,9 +60,9 @@ func main() {
 			os.Exit(1)
 		}
 		if result {
-			fmt.Println("in_office")
+			fmt.Println("In office")
 		} else {
-			fmt.Println("not_in_office")
+			fmt.Println("Not in office")
 		}
 		return
 	}
@@ -189,10 +189,11 @@ func logAttendance(parFile string, inOffice bool) error {
 	if increment == "" {
 		increment = "daily"
 	}
-	now := time.Now()
+	now := time.Now().Local()
 	var record []string
+	humanTime := now.Format("2006-01-02 03:04:05 PM MST")
 	if increment == "all" {
-		record = []string{now.Format(time.RFC3339), boolToString(inOffice)}
+		record = []string{humanTime, boolToString(inOffice)}
 		return appendCSV(parFile, record)
 	}
 	// daily: only one entry per day
@@ -201,18 +202,33 @@ func logAttendance(parFile string, inOffice bool) error {
 
 func boolToString(b bool) string {
 	if b {
-		return "in_office"
+		return "Y"
 	}
-	return "not_in_office"
+	return "N"
 }
 
 func appendCSV(filename string, record []string) error {
+	// Check if file exists and is empty (to write header)
+	writeHeader := false
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		writeHeader = true
+	} else {
+		fi, err := os.Stat(filename)
+		if err == nil && fi.Size() == 0 {
+			writeHeader = true
+		}
+	}
 	f, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 	w := csv.NewWriter(f)
+	if writeHeader {
+		if err := w.Write([]string{"Date/Time", "In Office?"}); err != nil {
+			return err
+		}
+	}
 	if err := w.Write(record); err != nil {
 		return err
 	}
@@ -239,21 +255,38 @@ func upsertDailyCSV(filename string, now time.Time, inOffice bool) error {
 		}
 		records = append(records, rec)
 	}
+	// Check for header, add if missing
+	header := []string{"Date/Time", "In Office?"}
+	hasHeader := false
+	if len(records) > 0 && len(records[0]) == 2 && records[0][0] == header[0] && records[0][1] == header[1] {
+		hasHeader = true
+	}
+	if !hasHeader {
+		records = append([][]string{header}, records...)
+	}
 	f.Truncate(0)
 	f.Seek(0, 0)
 	w := csv.NewWriter(f)
+	now = now.Local()
 	dateStr := now.Format("2006-01-02")
+	humanTime := now.Format("2006-01-02 03:04:05 PM MST")
 	updated := false
-	for i, rec := range records {
-		if len(rec) > 0 && rec[0][:10] == dateStr {
-			if rec[1] != "in_office" && inOffice {
-				records[i][1] = "in_office"
+	// Start from 1 if header present
+	startIdx := 1
+	if !hasHeader {
+		startIdx = 1
+	}
+	for i := startIdx; i < len(records); i++ {
+		rec := records[i]
+		if len(rec) > 0 && len(rec[0]) >= 10 && rec[0][:10] == dateStr {
+			if rec[1] != "Y" && inOffice {
+				records[i][1] = "Y"
 			}
 			updated = true
 		}
 	}
 	if !updated {
-		records = append(records, []string{now.Format(time.RFC3339), boolToString(inOffice)})
+		records = append(records, []string{humanTime, boolToString(inOffice)})
 	}
 	for _, rec := range records {
 		w.Write(rec)
