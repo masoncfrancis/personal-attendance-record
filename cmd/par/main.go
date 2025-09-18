@@ -225,7 +225,9 @@ func appendCSV(filename string, record []string) error {
 	defer f.Close()
 	w := csv.NewWriter(f)
 	if writeHeader {
-		w.Write([]string{"Date/Time", "In Office?"})
+		if err := w.Write([]string{"Date/Time", "In Office?"}); err != nil {
+			return err
+		}
 	}
 	if err := w.Write(record); err != nil {
 		return err
