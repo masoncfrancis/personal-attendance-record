@@ -113,7 +113,7 @@ You can use a cron job to schedule `par` to run on a schedule. The instructions 
 
 To run `par` periodically between 9:00 and 17:00 (9am–5pm), pick some times that suit you. I chose `09:30`, `11:30`, `15:00` (3:00 PM), and `16:30` (4:30 PM).
 
-Create the cron jobs with `crontab -e` to run at those times and append output to a log. Because the minutes differ between entries in our example times, we will use two cron lines. paste the following into the file:
+Create the cron jobs with `crontab -e` to run at those times. Because the minutes differ between entries in our example times, we will use two cron lines. paste the following into the file:
 
 ```
 # Run at 09:30, 11:30, 15:00 and 16:30 every day
