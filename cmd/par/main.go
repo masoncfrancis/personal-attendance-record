@@ -26,11 +26,19 @@ func main() {
 		exeDir := filepath.Dir(exePath)
 		dotenvPath := filepath.Join(exeDir, ".env")
 		if err := godotenv.Load(dotenvPath); err != nil {
-			fmt.Fprintf(os.Stderr, "Warning: failed to load .env file from %s: %v\n", dotenvPath, err)
+			if errors.Is(err, os.ErrNotExist) {
+				fmt.Fprintf(os.Stderr, "Note: .env file not found at %s (skipping)\n", dotenvPath)
+			} else {
+				fmt.Fprintf(os.Stderr, "Warning: failed to load .env file from %s: %v\n", dotenvPath, err)
+			}
 		}
 	} else {
 		if err := godotenv.Load(); err != nil {
-			fmt.Fprintf(os.Stderr, "Warning: failed to load .env file from current directory: %v\n", err)
+			if errors.Is(err, os.ErrNotExist) {
+				fmt.Fprintln(os.Stderr, "Note: .env file not found in current directory (skipping)")
+			} else {
+				fmt.Fprintf(os.Stderr, "Warning: failed to load .env file from current directory: %v\n", err)
+			}
 		}
 	}
 
