@@ -19,20 +19,8 @@ import (
 const version = "0.1.1" 
 
 func main() {
-	// Get the absolute path to the directory containing the executable.
-	// This assumes the .env file is in the same directory as the executable.
-	ex, err := os.Executable()
-	if err != nil {
-		log.Fatalf("Error getting executable path: %v", err)
-	}
-	exPath := filepath.Dir(ex)
-	envPath := filepath.Join(exPath, ".env")
-
-	// Load the .env file from the specified path.
-	err = godotenv.Load(envPath)
-	if err != nil {
-		log.Fatalf("Error loading .env file from %s: %v", envPath, err)
-	}
+	// Load .env file if present
+	_ = godotenv.Load()
 
 	checkFlag := flag.Bool("check", false, "Run a single attendance check, update log and exit")
 	checkFlagShort := flag.Bool("c", false, "Run a single attendance check, update log and exit (shorthand)")
