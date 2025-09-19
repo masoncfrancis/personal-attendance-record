@@ -10,17 +10,25 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
 )
 
-const version = "0.1.1" 
+const version = "0.1.2"
 
 func main() {
-	// Load .env file if present
-	_ = godotenv.Load()
+	// Load .env file from the directory where the executable is stored (cross-platform)
+	exePath, err := os.Executable()
+	if err == nil {
+		exeDir := filepath.Dir(exePath)
+		dotenvPath := filepath.Join(exeDir, ".env")
+		_ = godotenv.Load(dotenvPath)
+	} else {
+		_ = godotenv.Load()
+	}
 
 	checkFlag := flag.Bool("check", false, "Run a single attendance check, update log and exit")
 	checkFlagShort := flag.Bool("c", false, "Run a single attendance check, update log and exit (shorthand)")
