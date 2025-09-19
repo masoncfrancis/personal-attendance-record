@@ -27,12 +27,27 @@
 #### UNIX-like Operating Systems (Linux, macOS, etc.)
 
 
-Download the binary from the [Releases page](https://github.com/masoncfrancis/personal-attendance-record/releases). Move it to a directory in your `PATH` (e.g., `/usr/local/bin`). Example:
+Download the binary from the [Releases page](https://github.com/masoncfrancis/personal-attendance-record/releases) and save it in a folder of your choice (for example, `~/par-tools` or `/opt/par`).
 
 ```bash
-mv ./par /usr/local/bin/par
-chmod +x /usr/local/bin/par
+mkdir -p ~/par-tools
+mv path/to/downloaded/binary ~/par-tools/par
+chmod +x ~/par-tools/par
 ```
+
+You can run the program directly from that folder:
+
+```bash
+~/par-tools/par --version
+```
+
+Optionally, you may add the folder to your `PATH` if you want to run `par` manually from anywhere. For example, to add `~/par-tools` to your PATH, add the below line to your `~/.bashrc` or `~/.zshrc` file:
+
+```bash
+export PATH="$HOME/par-tools:$PATH"
+```
+
+Then, restart your shell.
 
 
 ##### If you run into problems running `par` after downloading/installing
