@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -355,7 +356,46 @@ func stripScheme(addr string) string {
 }
 
 func pingHost(host string) error {
-	// Use system ping command, 1 packet, 2s timeout
-	cmd := exec.Command("ping", "-c", "1", "-W", "2", host)
+	if runtime.GOOS == "windows" {
+		// On Windows, ping is usually in PATH, but also check System32
+		pingPaths := []string{
+			"ping.exe",
+			"C:/Windows/System32/ping.exe",
+		}
+		var pingCmd string
+		for _, path := range pingPaths {
+			if _, err := os.Stat(path); err == nil {
+				pingCmd = path
+				break
+			}
+		}
+		if pingCmd == "" {
+			pingCmd = "ping" // fallback to PATH
+		}
+		// Windows: -n (count), -w (timeout in ms)
+		cmd := exec.Command(pingCmd, "-n", "1", "-w", "2000", host)
+		return cmd.Run()
+	}
+	// Unix-like systems
+	pingPaths := []string{
+		"/sbin/ping",
+		"/bin/ping",
+		"/usr/bin/ping",
+		"/usr/sbin/ping",
+		"/usr/local/bin/ping",
+		"/usr/local/sbin/ping",
+		"/opt/homebrew/bin/ping",
+	}
+	var pingCmd string
+	for _, path := range pingPaths {
+		if _, err := os.Stat(path); err == nil {
+			pingCmd = path
+			break
+		}
+	}
+	if pingCmd == "" {
+		pingCmd = "ping" // fallback to PATH
+	}
+	cmd := exec.Command(pingCmd, "-c", "1", "-W", "2", host)
 	return cmd.Run()
 }
