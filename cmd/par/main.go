@@ -18,7 +18,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const version = "0.1.3"
+const version = "0.2.0"
 
 func main() {
 	// Load .env file from the directory where the executable is stored (cross-platform)
