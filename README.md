@@ -20,6 +20,8 @@
 
 ## Getting Started
 
+**Note:** Network reachability functionality of this tool may not work properly if your device uses GlobalProtect VPN
+
 
 ### Installation/Updating
 
