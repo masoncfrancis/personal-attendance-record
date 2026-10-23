@@ -16,15 +16,30 @@ All settings are set via environment variables. You can use a `.env` file kept i
 
 The file where the attendance record will be kept must be set in the `PAR_FILE` environment variable. It will be stored in CSV format so you can open it with Excel or another spreadsheet program. 
 
-#### Modes
+#### Record-keeping increments
 
-`par` can be configured to run in 2 modes: `corporateproxy` or `checkhost`. This mode is set via the `PAR_MODE` environment variable. 
+Users may have personal preferences over the granularity of records kept. As such, the user can choose whether to maintain 1 attendance entry per day or to save all checks. 
+This is configured by setting the environment variable `PAR_RECORD_INCREMENTS` to `daily` or `all`, respectively.
 
-##### `corporateproxy` mode
+##### `daily`
 
-Use `corporateproxy` mode if you have to configure proxy settings on your machine in order to access the internet while on the office network. If your workplace network does not use a proxy through which your computer must route all internet traffic, this mode will **not** work for you. 
+If the user elects to maintain 1 entry per day, `par` will continue to check as many times as it is run according to its established schedule, but it will only maintain 1 entry for each day. 
 
-This mode works by checking if you are able to access the internet without going through a corporate proxy. 
+With that said, if `par` finds that the user is in the office during at least 1 of its scheduled checks, it will mark the user as in-office for that day. The user must be working away from the office for all checks for `par` to record the day as not-in-office.
+
+##### `all`
+
+If the user elects to keep all records, `par` will save the result of all checks along with their timestamps in the file. 
+
+#### Check method
+
+The user can select a method by which `par` performs its checks: `corporateproxy` or `checkhost`. The method must be set via the `PAR_MODE` environment variable. 
+
+##### `corporateproxy` method
+
+Use the `corporateproxy` method if you have to use a corporate proxy to access the internet from the corporate network. If your computer does not require a proxy configuration to enable internet access while in the office, this mode will **not** work for you. If you use a corporate proxy to gain internet access even while working away from the office, this method also won't work for you. 
+
+This method works by checking if you are able to access the internet without going through a corporate proxy. 
 
 ###### How It Works:
 
@@ -35,15 +50,15 @@ proxy server set in the `PAR_PROXY_ADDRESS` environment variable.
 If the URL is not reachable directly but the ping to the proxy is successful, it assumes you are in the office. 
 If it can reach the URL directly, it assumes you are working outside of the office.
 
-##### `checkurl` mode
+##### `checkurl` method
 
-Use `checkurl` mode if you know there are resources that you cannot reach while off of the office network.
+Use the `checkurl` method if you know there are network resources that you cannot reach while away from the office network.
 
 This mode works by checking if you can reach the URL configured in the `PAR_URL` environment variable. This variable should be set to a URL that is only reachable when on the office network.
 
 ###### How It Works:
 
-`par` will try to reach the URL provided. If it is successful, it assumes you are in the office. If not, it assumes you are working from outside the office. 
+`par` will try to reach the URL provided. If it is successful, it assumes you are in the office. If not, it assumes you are working away from the office. 
 
 ### Command Line Usage
 
@@ -54,6 +69,8 @@ This mode works by checking if you can reach the URL configured in the `PAR_URL`
 - `--version`, `-v`: Display the software version
 
 ### Crontab / Scheduling (recommended)
+
+There are multiple ways to schedule software to run, but we recommend setting up a cron job. 
 
 You can use a cron job to schedule `par` to run on a schedule. The instructions below are an example of how one might schedule `par` to log their attendance. 
 
