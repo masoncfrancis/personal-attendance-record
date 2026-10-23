@@ -191,8 +191,9 @@ func logAttendance(parFile string, inOffice bool) error {
 	}
 	now := time.Now()
 	var record []string
+	humanTime := now.Format("2006-01-02 15:04:05")
 	if increment == "all" {
-		record = []string{now.Format(time.RFC3339), boolToString(inOffice)}
+		record = []string{humanTime, boolToString(inOffice)}
 		return appendCSV(parFile, record)
 	}
 	// daily: only one entry per day
@@ -243,9 +244,10 @@ func upsertDailyCSV(filename string, now time.Time, inOffice bool) error {
 	f.Seek(0, 0)
 	w := csv.NewWriter(f)
 	dateStr := now.Format("2006-01-02")
+	humanTime := now.Format("2006-01-02 15:04:05")
 	updated := false
 	for i, rec := range records {
-		if len(rec) > 0 && rec[0][:10] == dateStr {
+		if len(rec) > 0 && len(rec[0]) >= 10 && rec[0][:10] == dateStr {
 			if rec[1] != "in_office" && inOffice {
 				records[i][1] = "in_office"
 			}
@@ -253,7 +255,7 @@ func upsertDailyCSV(filename string, now time.Time, inOffice bool) error {
 		}
 	}
 	if !updated {
-		records = append(records, []string{now.Format(time.RFC3339), boolToString(inOffice)})
+		records = append(records, []string{humanTime, boolToString(inOffice)})
 	}
 	for _, rec := range records {
 		w.Write(rec)
