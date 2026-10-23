@@ -112,15 +112,12 @@ All settings are set via environment variables. Before using `par`, you will nee
 | Variable              | Description                                                      |
 |-----------------------|------------------------------------------------------------------|
 | `PAR_FILE`            | Path to the CSV file for attendance records                      |
-| `PAR_MODE`            | Check method: `corporateproxy` or `checkurl`                     |
+| `PAR_MODE`            | Check method: `corporateproxy` or `checkurl`                    |
+| `PAR_URL`             | URL to check (see method details below) (optional if using `corporateproxy` mode) |
+| `PAR_PROXY_ADDRESS`   | Proxy address (only required for `corporateproxy` mode)          |
+| `PAR_RECORD_INCREMENTS` | `daily` (default) or `all` (see below)                         |
 
-#### Optional Environment Variables
 
-| Variable                  | Description                                                      |
-|---------------------------|------------------------------------------------------------------|
-| `PAR_RECORD_INCREMENTS`   | `daily` (default) or `all` (see below)                           |
-| `PAR_URL`                 | URL to check (see method details below) (optional if using `corporateproxy` mode) |
-| `PAR_PROXY_ADDRESS`       | Proxy address (required for `corporateproxy` mode)               |
 
 Example `.env`:
 
@@ -146,7 +143,7 @@ Set `PAR_RECORD_INCREMENTS` to select how many records are saved:
 
 Set `PAR_MODE` to select the check method:
 
-| Value            | Description                                                                                 |
+| Value           | Description                                                                                 |
 |-----------------|---------------------------------------------------------------------------------------------|
 | corporateproxy  | Checks if you can access a URL without a proxy and pings the proxy server.                  |
 | checkurl        | Checks if you can reach a URL only available on the office network.                         |
@@ -172,12 +169,12 @@ If the URL is reachable, you are assumed to be in the office.
 
 `par` exposes a simple command-line interface for use in cronjobs or manual invocation.
 
-| Flag         | Shorthand | Description                                         |
-|--------------|-----------|-----------------------------------------------------|
-| `--check`    | `-c`      | Run a single attendance check, update log and exit  |
-| `--no-save`  | `-n`      | Run a check and print result (no file saved); good for testing       |
-| `--path`     | `-p`      | Display the path of the attendance record file      |
-| `--version`  | `-v`      | Display the software version                        |
+| Flag       | Shorthand | Description                                         |
+|------------|-----------|-----------------------------------------------------|
+| `--check`  | `-c`      | Run a single attendance check, update log and exit  |
+| `--no-save`| `-n`      | Run a check and print result (no file saved); good for testing |
+| `--path`   | `-p`      | Display the path of the attendance record file      |
+| `--version`| `-v`      | Display the software version                        |
 
 Examples:
 
@@ -223,15 +220,20 @@ Add arguments: --check
 
 #### Why is my attendance saved in CSV format?
 
-
 The attendance record is saved in CSV format mainly to make it easy to open with spreadsheet software like Excel or Google Sheets, as opposed to keeping it in a database or a more complex file format. This allows for easy viewing, editing, and analysis of your attendance data without needing specialized software.
 
 
 #### Virus Warnings
 
-
 Go binaries are structured differently than many other programs. Some antivirus software may flag the binaries as suspicious because they are not signed. If you encounter this, add an exception for the binary or build from source for peace of mind.
 
+#### I found a bug
+
+Please open an issue on the [GitHub Issues page](https://github.com/personal-attendance-record/issues)
+
+#### I have a feature request
+
+Please post in the [GitHub Discussions page](https://github.com/personal-attendance-record/discussions)
 
 
 ---
