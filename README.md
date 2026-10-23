@@ -155,7 +155,7 @@ Set `PAR_MODE` to select the check method:
 
 If the URL is not reachable directly but the proxy is reachable, you are assumed to be in the office.
 
-**checkurl env varexample:**
+**checkurl env var example:**
 
 - `PAR_URL=https://internal.company.com`
 
