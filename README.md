@@ -23,7 +23,7 @@ curl -s https://installer-par-643095722924.us-central1.run.app/! | sudo bash
 You're right to be wary of running random bash scripts on your system, so if you want to read through the install script before you run it, you can see it at [https://installer-par-643095722924.us-central1.run.app/!?type=script](https://installer-par-643095722924.us-central1.run.app/!?type=script). It's not very long. 
 Basically the script checks what OS and architecture you're using, downloads the appropriate binary, and installs it to a directory, most likely `/usr/local/bin`.
 If you get an error saying that the directory doesn't exist, you can create it with `sudo mkdir -p [the directory path]`. If you do that, install successfully, 
-and try to run `filesize` and it says it can't be found, you might need to add that directory to your PATH variable. Look up how to do that if you're not sure.
+and try to run `par` and it says it can't be found, you might need to add that directory to your PATH variable. Look up how to do that if you're not sure.
 
 If you would rather not use the install script, you can manually download the appropriate binary for your operating system and architecture from the [Releases page](https://github.com/masoncfrancis/personal-attendance-record/releases) and use it as you please.
 
