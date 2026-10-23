@@ -33,7 +33,7 @@ func main() {
 	flag.Parse()
 
 	if *versionFlag || *versionFlagShort {
-		fmt.Println("personal-attendance-record version", version)
+		fmt.Println("personal-attendance-record (par) version", version)
 		return
 	}
 
