@@ -25,9 +25,13 @@ func main() {
 	if err == nil {
 		exeDir := filepath.Dir(exePath)
 		dotenvPath := filepath.Join(exeDir, ".env")
-		_ = godotenv.Load(dotenvPath)
+		if err := godotenv.Load(dotenvPath); err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: failed to load .env file from %s: %v\n", dotenvPath, err)
+		}
 	} else {
-		_ = godotenv.Load()
+		if err := godotenv.Load(); err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: failed to load .env file from current directory: %v\n", err)
+		}
 	}
 
 	checkFlag := flag.Bool("check", false, "Run a single attendance check, update log and exit")
