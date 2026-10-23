@@ -148,14 +148,14 @@ Set `PAR_MODE` to select the check method:
 | `corporateproxy`  | Checks if you can access a URL without a proxy and pings the proxy server.                  |
 | `checkurl`        | Checks if you can reach a URL only available on the office network.                         |
 
-**corporateproxy example:**
+**corporateproxy env var example:**
 
 - `PAR_URL=https://www.google.com` (default)
 - `PAR_PROXY_ADDRESS=proxy.company.com:8080`
 
 If the URL is not reachable directly but the proxy is reachable, you are assumed to be in the office.
 
-**checkurl example:**
+**checkurl env varexample:**
 
 - `PAR_URL=https://internal.company.com`
 
