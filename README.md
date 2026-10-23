@@ -22,9 +22,6 @@ If you get a `permission denied` error, you may need to run `chmod +x /path/to/p
 
 While Windows binaries are available, I haven't tested them and they are not officially supported. If you are feeling adventurous, you can try downloading the appropriate binary for your architecture from the Releases page and using it as you please. Let me know if you run into any issues.
 
-#### Virus warning??
-
-Go programs are stuctured differently than a lot of other programs out there. Some antivirus software may flag the binaries as suspicious because they are not signed. If you run into this issue, you can try adding an exception for the binary in your antivirus software. Or, if you're worried, feel free to build the program from source yourself. 
 
 #### Building from source
 
@@ -125,6 +122,13 @@ Create the cron jobs with `crontab -e` to run at those times and append output t
 ```
 
 - **Use absolute paths:** cron runs with a minimal environment — always use the full path to the `par` executable.
+
+### FAQ
+
+#### Virus warning
+
+Go programs are stuctured differently than a lot of other programs out there. Some antivirus software may flag the binaries as suspicious because of this, and that they are not signed. If you run into this issue, you can try adding an exception for the binary in your antivirus software. Or, if you're worried, feel free to build the program from source yourself. 
+
 
 ## License
 
