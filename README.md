@@ -4,13 +4,17 @@ I wrote this tool, called `par` for short, to automate keeping my own record of 
 
 It will check if you are in office by means of seeing what you can reach on the network, assuming that your office network has resources or is configured differently than your network at home. 
 
-`par` is designed to be run periodically by a cronjob.
+`par` is designed to be run periodically by a cronjob, and stores the record in a CSV file.
 
 ## Getting Started
 
 ### Configuration
 
-All settings are set via a `.env` file kept in the same directory as the executable. An example is available in [`.env.example`](.env.example).
+All settings are set via environment variables. You can use a `.env` file kept in the same directory as the executable. An example is available in [`.env.example`](.env.example).
+
+#### File Path
+
+The file where the attendance record will be kept must be set in the `PAR_FILE` environment variable. It will be stored in CSV format so you can open it with Excel or another spreadsheet program. 
 
 #### Modes
 
@@ -24,7 +28,7 @@ This mode works by checking if you are able to access the internet without going
 
 ###### Logic:
 
-The tool will attempt to query a URL. This URL can be set in the `CHECK_URL` environment variable, and needs to be set to a website on the public internet that ordinarily would be unaccessible when not using the corporate proxy. If `CHECK_URL` is 
+The tool will attempt to query a URL. This URL can be set in the `PAR_URL` environment variable, and needs to be set to a website on the public internet that ordinarily would be unaccessible when not using the corporate proxy. If `PAR_URL` is 
 not set, it defaults to `https://www.google.com`.
 
 If the URL is not reachable directly, it assumes you are in the office. 
@@ -34,12 +38,19 @@ If it can reach the URL directly, it assumes you are working outside of the offi
 
 Use `checkurl` mode if you know there are resources that you cannot reach while off of the office network.
 
-This mode works by checking if you can reach a URL, configured in the `CHECK_URL` environment variable. This should be set to a URL that is only  
+This mode works by checking if you can reach a URL, configured in the `PAR_URL` environment variable. This should be set to a URL that is only  
 
 ###### Logic:
 
 `par` will try to reach the URL provided. If it is successful, it assumes you are in the office. If not, it assumes you are working from outside the office. 
 
+### Command Line Usage
+
+`par` exposes a simple command-line interface intended for use from a cronjob or manual invocation.
+
+- `--check`, `-c`: Run a single attendance check, update log and exit
+- `--path`, `-p`: Display the path of the file where the attendance record is kept
+- `--version`, `-v`: Display the software version
 
 ## License
 
