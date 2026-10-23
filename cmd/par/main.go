@@ -60,9 +60,9 @@ func main() {
 			os.Exit(1)
 		}
 		if result {
-			fmt.Println("in_office")
+			fmt.Println("In office")
 		} else {
-			fmt.Println("not_in_office")
+			fmt.Println("Not in office")
 		}
 		return
 	}
@@ -191,7 +191,7 @@ func logAttendance(parFile string, inOffice bool) error {
 	}
 	now := time.Now()
 	var record []string
-	humanTime := now.Format("2006-01-02 15:04:05")
+	humanTime := now.Format("2006-01-02 03:04:05 PM")
 	if increment == "all" {
 		record = []string{humanTime, boolToString(inOffice)}
 		return appendCSV(parFile, record)
@@ -202,18 +202,31 @@ func logAttendance(parFile string, inOffice bool) error {
 
 func boolToString(b bool) string {
 	if b {
-		return "in_office"
+		return "Y"
 	}
-	return "not_in_office"
+	return "N"
 }
 
 func appendCSV(filename string, record []string) error {
+	// Check if file exists and is empty (to write header)
+	writeHeader := false
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		writeHeader = true
+	} else {
+		fi, err := os.Stat(filename)
+		if err == nil && fi.Size() == 0 {
+			writeHeader = true
+		}
+	}
 	f, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 	w := csv.NewWriter(f)
+	if writeHeader {
+		w.Write([]string{"Date/Time", "In Office?"})
+	}
 	if err := w.Write(record); err != nil {
 		return err
 	}
@@ -240,16 +253,31 @@ func upsertDailyCSV(filename string, now time.Time, inOffice bool) error {
 		}
 		records = append(records, rec)
 	}
+	// Check for header, add if missing
+	header := []string{"Date/Time", "In Office?"}
+	hasHeader := false
+	if len(records) > 0 && len(records[0]) == 2 && records[0][0] == header[0] && records[0][1] == header[1] {
+		hasHeader = true
+	}
+	if !hasHeader {
+		records = append([][]string{header}, records...)
+	}
 	f.Truncate(0)
 	f.Seek(0, 0)
 	w := csv.NewWriter(f)
 	dateStr := now.Format("2006-01-02")
-	humanTime := now.Format("2006-01-02 15:04:05")
+	humanTime := now.Format("2006-01-02 03:04:05 PM")
 	updated := false
-	for i, rec := range records {
+	// Start from 1 if header present
+	startIdx := 1
+	if !hasHeader {
+		startIdx = 1
+	}
+	for i := startIdx; i < len(records); i++ {
+		rec := records[i]
 		if len(rec) > 0 && len(rec[0]) >= 10 && rec[0][:10] == dateStr {
-			if rec[1] != "in_office" && inOffice {
-				records[i][1] = "in_office"
+			if rec[1] != "Y" && inOffice {
+				records[i][1] = "Y"
 			}
 			updated = true
 		}
