@@ -25,7 +25,7 @@ This is configured by setting the environment variable `PAR_RECORD_INCREMENTS` t
 
 If the user elects to maintain 1 entry per day, `par` will continue to check as many times as it is run according to its established schedule, but it will only maintain 1 entry for each day. 
 
-With that said, if `par` finds that the user is in the office during at least 1 of its scheduled checks, it will mark the user as in-office for that day. The user must be working away from the office for all checks for `par` to record the day as not-in-office.
+As such, if `par` finds that the user is in the office during at least 1 of its scheduled checks, it will mark the user as in-office for that day. The user must be working away from the office for all checks for `par` to record the day as not-in-office.
 
 ##### `all`
 
