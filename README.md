@@ -134,19 +134,19 @@ PAR_PROXY_ADDRESS=http://proxy.company.com:8080
 
 Set `PAR_RECORD_INCREMENTS` to select how many records are saved:
 
-| Value  | Description                                                                 |
-|--------|-----------------------------------------------------------------------------|
-| daily  | Only one entry per day, no matter how many checks are performed. If any check finds you in office, marks day as 'in'.|
-| all    | Every check is logged with timestamp.                                       |
+| Value    | Description                                                                 |
+|----------|-----------------------------------------------------------------------------|
+| `daily`  | Only one entry per day, no matter how many checks are performed. If any check finds you in office, marks day as 'in'. |
+| `all`    | Every check is logged with timestamp.                                       |
 
 #### Check Method
 
 Set `PAR_MODE` to select the check method:
 
-| Value           | Description                                                                                 |
-|-----------------|---------------------------------------------------------------------------------------------|
-| corporateproxy  | Checks if you can access a URL without a proxy and pings the proxy server.                  |
-| checkurl        | Checks if you can reach a URL only available on the office network.                         |
+| Value             | Description                                                                                 |
+|-------------------|---------------------------------------------------------------------------------------------|
+| `corporateproxy`  | Checks if you can access a URL without a proxy and pings the proxy server.                  |
+| `checkurl`        | Checks if you can reach a URL only available on the office network.                         |
 
 **corporateproxy example:**
 
