@@ -70,9 +70,6 @@ This mode works by checking if you can reach the URL configured in the `PAR_URL`
 - `--path`, `-p`: Display the path of the file where the attendance record is kept
 - `--version`, `-v`: Display the software version
 
-#### `--no-save`, `-n`
-
-If you use the `--no-save` or `-n` flag, `par` will perform a single attendance check and print the result to standard output, but **will not** write anything to the attendance record file. This is useful if you want to check your current status without modifying your attendance log.
 
 ### Crontab / Scheduling (recommended)
 
