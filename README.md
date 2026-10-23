@@ -10,7 +10,7 @@ It will check if you are in office by means of seeing what you can reach on the 
 
 ### Installation/Updating
 
-#### UNIX-like Operating Systems
+#### UNIX-like Operating Systems (Linux, macOS, etc.)
 
 Run the following command to install or update an existing installation on UNIX-like operating systems:
 
@@ -33,12 +33,7 @@ If you get a `permission denied` error, you may need to run `chmod +x /path/to/p
 
 #### Windows
 
-I haven't tested this at all on Windows, so please let me know if you run into any issues.
-
-If you are using Windows, you'll need to download the executable for your operating system on the [Releases page](https://github.com/masoncfrancis/personal-attendance-record/releases). 
-If you want it to always be accessible via the command line or PowerShell, make sure to put it somewhere in your PATH variable (or add the directory it's 
-in to your PATH variable). Look up how to do that if you're not sure. 
-
+While Windows binaries are available, I haven't tested them and they are not officially supported. If you are feeling adventurous, you can try downloading the appropriate binary for your architecture from the Releases page and using it as you please. Let me know if you run into any issues.
 
 ### Configuration
 
