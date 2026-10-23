@@ -16,7 +16,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const version = "0.1.0"
+const version = "0.1.1" 
 
 func main() {
 	// Get the absolute path to the directory containing the executable.
