@@ -290,7 +290,6 @@ func upsertDailyCSV(filename string, now time.Time, inOffice bool) error {
 	w := csv.NewWriter(f)
 	now = now.Local()
 	dateStr := now.Format("2006-01-02")
-	humanTime := now.Format("2006-01-02 03:04:05 PM MST")
 	updated := false
 	// Start from 1 if header present
 	startIdx := 1
@@ -307,7 +306,7 @@ func upsertDailyCSV(filename string, now time.Time, inOffice bool) error {
 		}
 	}
 	if !updated {
-		records = append(records, []string{humanTime, boolToString(inOffice)})
+		records = append(records, []string{dateStr, boolToString(inOffice)})
 	}
 	for _, rec := range records {
 		w.Write(rec)
