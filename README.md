@@ -111,7 +111,7 @@ There are multiple ways to schedule software to run, but we recommend setting up
 
 You can use a cron job to schedule `par` to run on a schedule. The instructions below are an example of how one might schedule `par` to log their attendance. 
 
-To run `par` four times between 9:00 and 17:00 (9am–5pm), pick four times that suit you. A common choice is `09:30`, `11:30`, `15:00` (3:00 PM), and `16:30` (4:30 PM).
+To run `par` periodically between 9:00 and 17:00 (9am–5pm), pick some times that suit you. I chose `09:30`, `11:30`, `15:00` (3:00 PM), and `16:30` (4:30 PM).
 
 Create the cron jobs with `crontab -e` to run at those times and append output to a log. Because the minutes differ between entries in our example times, we will use two cron lines. paste the following into the file:
 
