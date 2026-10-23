@@ -10,17 +10,37 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
 )
 
-const version = "0.1.1" 
+const version = "0.1.2"
 
 func main() {
-	// Load .env file if present
-	_ = godotenv.Load()
+	// Load .env file from the directory where the executable is stored (cross-platform)
+	exePath, err := os.Executable()
+	if err == nil {
+		exeDir := filepath.Dir(exePath)
+		dotenvPath := filepath.Join(exeDir, ".env")
+		if err := godotenv.Load(dotenvPath); err != nil {
+			if errors.Is(err, os.ErrNotExist) {
+				fmt.Fprintf(os.Stderr, "Note: .env file not found at %s (skipping)\n", dotenvPath)
+			} else {
+				fmt.Fprintf(os.Stderr, "Warning: failed to load .env file from %s: %v\n", dotenvPath, err)
+			}
+		}
+	} else {
+		if err := godotenv.Load(); err != nil {
+			if errors.Is(err, os.ErrNotExist) {
+				fmt.Fprintln(os.Stderr, "Note: .env file not found in current directory (skipping)")
+			} else {
+				fmt.Fprintf(os.Stderr, "Warning: failed to load .env file from current directory: %v\n", err)
+			}
+		}
+	}
 
 	checkFlag := flag.Bool("check", false, "Run a single attendance check, update log and exit")
 	checkFlagShort := flag.Bool("c", false, "Run a single attendance check, update log and exit (shorthand)")
