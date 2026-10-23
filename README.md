@@ -18,7 +18,7 @@ Run the following command to install or update an existing installation on UNIX-
 curl -s https://installer-par-643095722924.us-central1.run.app/! | sudo bash
 ```
 
-(I know the URL is weird, that's just how it is until I can get a nicer one set up)
+(I know the URL is weird, that's just how it is until I can get a nicer one set up. This one is the direct URL to where I'm hosting it on Google Cloud)
 
 You're right to be wary of running random bash scripts on your system, so if you want to read through the install script before you run it, you can see it at [https://installer-par-643095722924.us-central1.run.app/!?type=script](https://installer-par-643095722924.us-central1.run.app/!?type=script). It's not very long. 
 Basically the script checks what OS and architecture you're using, downloads the appropriate binary, and installs it to a directory, most likely `/usr/local/bin`.
