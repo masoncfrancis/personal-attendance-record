@@ -229,11 +229,11 @@ Go binaries are structured differently than many other programs. Some antivirus 
 
 #### I found a bug
 
-Please open an issue on the [GitHub Issues page](https://github.com/personal-attendance-record/issues)
+Please open an issue on the [GitHub Issues page](https://github.com/masoncfrancis/personal-attendance-record/issues)
 
 #### I have a feature request
 
-Please post in the [GitHub Discussions page](https://github.com/personal-attendance-record/discussions)
+Please post in the [GitHub Discussions page](https://github.com/masoncfrancis/personal-attendance-record/discussions)
 
 
 ---
