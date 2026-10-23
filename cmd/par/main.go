@@ -129,46 +129,53 @@ func checkCorporateProxy() (bool, error) {
 	if url == "" {
 		url = "https://www.google.com"
 	}
+
 	proxyAddr := os.Getenv("PAR_PROXY_ADDRESS")
 	if proxyAddr == "" {
 		return false, errors.New("PAR_PROXY_ADDRESS environment variable not set")
 	}
-	// Remove URL scheme if present
-	proxyAddr = stripScheme(proxyAddr)
 
-	// Try to access the URL with no proxy
-	transport := &http.Transport{Proxy: nil}
-	client := &http.Client{Transport: transport, Timeout: 5 * time.Second}
+	// Strip any URL scheme from proxy address
+	proxyHostPort := strings.TrimPrefix(proxyAddr, "http://")
+	proxyHostPort = strings.TrimPrefix(proxyHostPort, "https://")
+
+	// 1) Try direct access to the target URL without using any proxy
+	transport := &http.Transport{
+		Proxy: nil,
+		DialContext: (&net.Dialer{
+			Timeout:   5 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).DialContext,
+		TLSHandshakeTimeout:   5 * time.Second,
+		ResponseHeaderTimeout: 5 * time.Second,
+	}
+	client := &http.Client{
+		Transport: transport,
+		Timeout:   8 * time.Second,
+	}
+
 	resp, err := client.Get(url)
-	urlErr := err
-	if err == nil && resp.StatusCode == 200 {
-		resp.Body.Close()
-		// URL is reachable without proxy: user is NOT in office
-		return false, nil
-	}
-	if resp != nil {
+	if err == nil && resp != nil {
+		if resp.StatusCode == 200 {
+			resp.Body.Close()
+			return false, nil // direct access works -> not in office
+		}
 		resp.Body.Close()
 	}
 
-	// Try to ping the proxy (ICMP ping via shell)
-	proxyHost := proxyAddr
-	if i := strings.Index(proxyHost, ":"); i != -1 {
-		proxyHost = proxyHost[:i]
-	}
-	pingErr := pingHost(proxyHost)
-	if pingErr == nil {
-		// URL is NOT reachable without proxy, but proxy IS reachable: user is IN office
-		return true, nil
+	// 2) If direct access fails, test the corporate proxy with TCP instead of ping
+	conn, err := net.DialTimeout("tcp", proxyHostPort, 3*time.Second)
+	if err == nil && conn != nil {
+		conn.Close()
+		return true, nil // proxy is reachable -> assume in office
 	}
 
-	msg := ""
-	if urlErr != nil {
-		msg += fmt.Sprintf("Cannot reach URL (%s): %v. ", url, urlErr)
-	} else {
-		msg += fmt.Sprintf("Cannot reach URL (%s): status not 200. ", url)
-	}
-	msg += fmt.Sprintf("Cannot ping proxy host (%s): %v.", proxyHost, pingErr)
-	return false, errors.New(strings.TrimSpace(msg))
+	// 3) Final fallback error
+	return false, fmt.Errorf(
+		"cannot reach %s directly and corporate proxy %s is not reachable",
+		url,
+		proxyHostPort,
+	)
 }
 
 func checkURL() (bool, error) {
