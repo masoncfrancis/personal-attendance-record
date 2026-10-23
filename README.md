@@ -127,7 +127,7 @@ Create the cron jobs with `crontab -e` to run at those times and append output t
 
 #### Virus warning
 
-Go programs are stuctured differently than a lot of other programs out there. Some antivirus software may flag the binaries as suspicious because of this, and that they are not signed. If you run into this issue, you can try adding an exception for the binary in your antivirus software. Or, if you're worried, feel free to build the program from source yourself. 
+Go programs are stuctured differently than a lot of other programs out there. Some antivirus software may flag the binaries as suspicious because of this, and because they are not signed. If you run into this issue, you can try adding an exception for the binary in your antivirus software. Or, if you're worried, feel free to build the program from source yourself. 
 
 
 ## License
