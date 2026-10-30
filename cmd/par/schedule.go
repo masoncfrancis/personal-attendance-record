@@ -229,7 +229,7 @@ func launchctlDomain() string {
 }
 
 var runLaunchctl = func(args ...string) ([]byte, error) {
-	return exec.Command("launchctl", args...).CombinedOutput()
+	return exec.Command("/bin/launchctl", args...).CombinedOutput()
 }
 
 func writeLaunchAgent(filename, executable string, times []scheduleTime, logDir string) error {
