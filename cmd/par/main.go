@@ -19,11 +19,12 @@ import (
 )
 
 const version = "0.3.0"
+const errorPrefix = "Error:"
 
 func main() {
 	if len(os.Args) > 1 && os.Args[1] == "schedule" {
 		if err := handleSchedule(os.Args[2:]); err != nil {
-			fmt.Fprintln(os.Stderr, "Error:", err)
+			fmt.Fprintln(os.Stderr, errorPrefix, err)
 			os.Exit(1)
 		}
 		return
@@ -85,7 +86,7 @@ func main() {
 	if *noSaveFlag || *noSaveFlagShort {
 		result, err := checkAttendance()
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Error:", err)
+			fmt.Fprintln(os.Stderr, errorPrefix, err)
 			os.Exit(1)
 		}
 		if result {
@@ -99,7 +100,7 @@ func main() {
 	if *checkFlag || *checkFlagShort {
 		err := runCheck(parFile)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Error:", err)
+			fmt.Fprintln(os.Stderr, errorPrefix, err)
 			os.Exit(1)
 		}
 		return

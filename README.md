@@ -1,4 +1,3 @@
-
 # personal-attendance-record (`par`)
 
 `par` is a tool to automate keeping your own record of in-office attendance. It determines if you are in the office by checking network reachability, assuming your office network has unique resources or configurations. Records are stored in a CSV file for easy access.
@@ -22,12 +21,9 @@
 
 **Note:** Network reachability functionality of this tool may not work properly if your device uses GlobalProtect VPN
 
-
 ### Installation/Updating
 
-
 #### UNIX-like Operating Systems (Linux, macOS, etc.)
-
 
 Download the binary from the [Releases page](https://github.com/masoncfrancis/personal-attendance-record/releases) and save it in a folder of your choice (for example, `~/par-tools` or `/opt/par`).
 
@@ -51,14 +47,11 @@ export PATH="$HOME/par-tools:$PATH"
 
 Then, restart your shell.
 
-
 ##### If you run into problems running `par` after downloading/installing
 
 If you get a `permission denied` error, you may need to run `chmod +x /path/to/par` to make the binary executable. On Macs, you may also need to run `xattr -d com.apple.quarantine /path/to/par` to remove the quarantine attribute that macOS applies to files downloaded from the internet.
 
-
 #### Windows
-
 
 Windows binaries are available, but not officially supported. Download the appropriate binary from the Releases page. You can run it from Command Prompt or PowerShell:
 
@@ -69,15 +62,11 @@ cd path\to\downloaded\binary
 
 If you encounter issues, please report them.
 
-
-
 ---
 
 #### Building from Source
 
-
 You'll need [Go](https://go.dev/dl/) (version 1.13 or later) installed.
-
 
 Verify Go installation:
 
@@ -92,16 +81,13 @@ git clone https://github.com/masoncfrancis/personal-attendance-record.git
 cd personal-attendance-record
 ```
 
-
 Then, build the binary (run `go mod tidy` if dependencies are missing):
 
 ```bash
 go build -o par ./cmd/par
 ```
 
-
 This creates an executable named `par` in the current directory. Move it to a directory in your `PATH` if desired.
-
 
 ---
 
@@ -111,15 +97,13 @@ All settings are set via environment variables. Before using `par`, you will nee
 
 #### Required Environment Variables
 
-| Variable              | Description                                                      |
-|-----------------------|------------------------------------------------------------------|
-| `PAR_FILE`            | Path to the CSV file for attendance records                      |
-| `PAR_MODE`            | Check method: `corporateproxy` or `checkurl`                    |
-| `PAR_URL`             | URL to check (see method details below) (optional if using `corporateproxy` mode) |
-| `PAR_PROXY_ADDRESS`   | Proxy address (only required for `corporateproxy` mode)          |
-| `PAR_RECORD_INCREMENTS` | `daily` (default) or `all` (see below)                         |
-
-
+| Variable                | Description                                                                       |
+| ----------------------- | --------------------------------------------------------------------------------- |
+| `PAR_FILE`              | Path to the CSV file for attendance records                                       |
+| `PAR_MODE`              | Check method: `corporateproxy` or `checkurl`                                      |
+| `PAR_URL`               | URL to check (see method details below) (optional if using `corporateproxy` mode) |
+| `PAR_PROXY_ADDRESS`     | Proxy address (only required for `corporateproxy` mode)                           |
+| `PAR_RECORD_INCREMENTS` | `daily` (default) or `all` (see below)                                            |
 
 Example `.env`:
 
@@ -131,24 +115,23 @@ PAR_URL=https://internal.company.com
 PAR_PROXY_ADDRESS=http://proxy.company.com:8080
 ```
 
-
 #### Record-Keeping Increments
 
 Set `PAR_RECORD_INCREMENTS` to select how many records are saved:
 
-| Value    | Description                                                                 |
-|----------|-----------------------------------------------------------------------------|
-| `daily`  | Only one entry per day, no matter how many checks are performed. If any check finds you in office, marks day as 'in'. |
-| `all`    | Every check is logged with timestamp.                                       |
+| Value   | Description                                                                                                           |
+| ------- | --------------------------------------------------------------------------------------------------------------------- |
+| `daily` | Only one entry per day, no matter how many checks are performed. If any check finds you in office, marks day as 'in'. |
+| `all`   | Every check is logged with timestamp.                                                                                 |
 
 #### Check Method
 
 Set `PAR_MODE` to select the check method:
 
-| Value             | Description                                                                                 |
-|-------------------|---------------------------------------------------------------------------------------------|
-| `corporateproxy`  | Checks if you can access a URL without a proxy and pings the proxy server.                  |
-| `checkurl`        | Checks if you can reach a URL only available on the office network.                         |
+| Value            | Description                                                                |
+| ---------------- | -------------------------------------------------------------------------- |
+| `corporateproxy` | Checks if you can access a URL without a proxy and pings the proxy server. |
+| `checkurl`       | Checks if you can reach a URL only available on the office network.        |
 
 **corporateproxy env var example:**
 
@@ -163,20 +146,18 @@ If the URL is not reachable directly but the proxy is reachable, you are assumed
 
 If the URL is reachable, you are assumed to be in the office.
 
-
-
 ---
 
 ### Command Line Usage
 
 `par` exposes a simple command-line interface for use in cronjobs or manual invocation.
 
-| Flag       | Shorthand | Description                                         |
-|------------|-----------|-----------------------------------------------------|
-| `--check`  | `-c`      | Run a single attendance check, update log and exit  |
-| `--no-save`| `-n`      | Run a check and print result (no file saved); good for testing |
-| `--path`   | `-p`      | Display the path of the attendance record file      |
-| `--version`| `-v`      | Display the software version                        |
+| Flag        | Shorthand | Description                                                    |
+| ----------- | --------- | -------------------------------------------------------------- |
+| `--check`   | `-c`      | Run a single attendance check, update log and exit             |
+| `--no-save` | `-n`      | Run a check and print result (no file saved); good for testing |
+| `--path`    | `-p`      | Display the path of the attendance record file                 |
+| `--version` | `-v`      | Display the software version                                   |
 
 Examples:
 
@@ -187,11 +168,39 @@ par --path
 par -v
 ```
 
-
-
 ---
 
 ### Scheduling
+
+#### macOS (launchd)
+
+On macOS, `par` can install a per-user LaunchAgent. Pass each daily run time with a separate `--time` argument:
+
+```bash
+par schedule install \
+	--time 09:30 \
+	--time 11:30 \
+	--time 15:00 \
+	--time 16:30
+```
+
+The command writes `~/Library/LaunchAgents/com.personal-attendance-record.plist` and loads it with `launchctl`. The generated job runs the existing `par --check` command at each configured time.
+
+Use these commands to inspect or remove the job:
+
+```bash
+par schedule status
+par schedule uninstall
+```
+
+The executable path and `.env` file must remain in place after installation. LaunchAgent output is written to:
+
+```text
+~/Library/Logs/personal-attendance-record/stdout.log
+~/Library/Logs/personal-attendance-record/stderr.log
+```
+
+Schedule commands are macOS-only. On Linux and Windows they exit with an unsupported-platform error without creating or changing a schedule. The regular `par --check` command remains available on those platforms.
 
 #### UNIX-like (cron)
 
@@ -214,16 +223,13 @@ Program/script: C:\full\path\to\par.exe
 Add arguments: --check
 ```
 
-
 ---
 
 ### FAQ
 
-
 #### Why is my attendance saved in CSV format?
 
 The attendance record is saved in CSV format mainly to make it easy to open with spreadsheet software like Excel or Google Sheets, as opposed to keeping it in a database or a more complex file format. This allows for easy viewing, editing, and analysis of your attendance data without needing specialized software.
-
 
 #### Virus Warnings
 
@@ -236,7 +242,6 @@ Please open an issue on the [GitHub Issues page](https://github.com/masoncfranci
 #### I have a feature request
 
 Please post in the [GitHub Discussions page](https://github.com/masoncfrancis/personal-attendance-record/discussions)
-
 
 ---
 

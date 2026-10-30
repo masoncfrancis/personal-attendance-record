@@ -8,11 +8,12 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"os/user"
 	"path/filepath"
 	"runtime"
 	"sort"
+	"strconv"
 	"strings"
-	"time"
 )
 
 const launchAgentLabel = "com.personal-attendance-record"
@@ -122,8 +123,8 @@ func installSchedule(args []string) error {
 		return fmt.Errorf("create log directory: %w", err)
 	}
 
-	if _, err := runLaunchctl("bootout", launchctlDomain(), launchAgentLabel); err != nil {
-		// The service may not be installed yet.
+	if err := unloadSchedule(); err != nil {
+		return err
 	}
 	if err := writeLaunchAgent(plistPath, executable, times.values, logDir); err != nil {
 		return err
@@ -138,17 +139,15 @@ func installSchedule(args []string) error {
 func scheduleStatus() error {
 	output, err := runLaunchctl("print", launchctlDomain()+"/"+launchAgentLabel)
 	if err != nil {
-		return fmt.Errorf("LaunchAgent %s is not loaded: %w", launchAgentLabel, err)
+		return fmt.Errorf("LaunchAgent %s is not loaded: %s", launchAgentLabel, launchctlError(err, output))
 	}
 	fmt.Print(string(output))
 	return nil
 }
 
 func uninstallSchedule() error {
-	if _, err := runLaunchctl("bootout", launchctlDomain(), launchAgentLabel); err != nil {
-		if _, statErr := os.Stat(mustLaunchAgentPath()); statErr == nil {
-			return fmt.Errorf("unload LaunchAgent: %w", err)
-		}
+	if err := unloadSchedule(); err != nil {
+		return err
 	}
 	plistPath, err := launchAgentPath()
 	if err != nil {
@@ -161,15 +160,48 @@ func uninstallSchedule() error {
 	return nil
 }
 
+func unloadSchedule() error {
+	target := launchctlTarget()
+	output, err := runLaunchctl("bootout", target)
+	if err == nil {
+		return nil
+	}
+
+	statusOutput, statusErr := runLaunchctl("print", target)
+	if statusErr != nil && isAbsentLaunchctlService(statusOutput) {
+		return nil
+	}
+	return fmt.Errorf("unload LaunchAgent: %s", launchctlError(err, output))
+}
+
+func launchctlTarget() string {
+	return launchctlDomain() + "/" + launchAgentLabel
+}
+
+func isAbsentLaunchctlService(output []byte) bool {
+	text := strings.ToLower(strings.Join(strings.Fields(string(output)), " "))
+	return strings.Contains(text, "could not find service") || strings.Contains(text, "service not found")
+}
+
+func launchctlError(err error, output []byte) string {
+	details := strings.TrimSpace(string(output))
+	if details == "" {
+		return err.Error()
+	}
+	return fmt.Sprintf("%v: %s", err, details)
+}
+
 func parseScheduleTime(value string) (scheduleTime, error) {
-	if len(value) != 5 || value[2] != ':' {
-		return scheduleTime{}, fmt.Errorf("invalid schedule time %q: expected HH:MM", value)
+	parts := strings.Split(value, ":")
+	if len(parts) != 2 || (len(parts[0]) != 1 && len(parts[0]) != 2) || len(parts[1]) != 2 {
+		return scheduleTime{}, fmt.Errorf("invalid schedule time %q: expected H:MM or HH:MM", value)
 	}
-	parsed, err := time.Parse("15:04", value)
-	if err != nil || parsed.Format("15:04") != value {
-		return scheduleTime{}, fmt.Errorf("invalid schedule time %q: expected HH:MM", value)
+	hour, hourErr := strconv.Atoi(parts[0])
+	minute, minuteErr := strconv.Atoi(parts[1])
+	if hourErr != nil || minuteErr != nil || hour < 0 || hour > 23 || minute < 0 || minute > 59 {
+		return scheduleTime{}, fmt.Errorf("invalid schedule time %q: expected H:MM or HH:MM", value)
 	}
-	return scheduleTime{hour: parsed.Hour(), minute: parsed.Minute()}, nil
+	return scheduleTime{hour: hour, minute: minute}, nil
 }
 
 func launchAgentPath() (string, error) {
@@ -178,11 +210,6 @@ func launchAgentPath() (string, error) {
 		return "", fmt.Errorf("resolve home directory: %w", err)
 	}
 	return filepath.Join(home, "Library", "LaunchAgents", launchAgentLabel+".plist"), nil
-}
-
-func mustLaunchAgentPath() string {
-	path, _ := launchAgentPath()
-	return path
 }
 
 func launchLogDirectory() (string, error) {
@@ -194,7 +221,11 @@ func launchLogDirectory() (string, error) {
 }
 
 func launchctlDomain() string {
-	return fmt.Sprintf("gui/%d", os.Getuid())
+	currentUser, err := user.Current()
+	if err != nil {
+		return "gui/0"
+	}
+	return "gui/" + currentUser.Uid
 }
 
 var runLaunchctl = func(args ...string) ([]byte, error) {
