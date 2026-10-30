@@ -21,6 +21,14 @@ import (
 const version = "0.3.0"
 
 func main() {
+	if len(os.Args) > 1 && os.Args[1] == "schedule" {
+		if err := handleSchedule(os.Args[2:]); err != nil {
+			fmt.Fprintln(os.Stderr, "Error:", err)
+			os.Exit(1)
+		}
+		return
+	}
+
 	// Load .env file from the directory where the executable is stored (cross-platform)
 	exePath, err := os.Executable()
 	if err == nil {
